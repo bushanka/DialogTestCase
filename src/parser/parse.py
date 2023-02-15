@@ -30,6 +30,7 @@ async def parse_magnit(city):
     :return: имя файла, в который записались данные по товарам
     """
 
+    # В зависимости от города меняем куки-файлы у клиента
     cookies_data = {'mg_geo_id': '2398'} if city == 'Москва' else {'mg_geo_id': '2425'}
 
     async with aiohttp.ClientSession(cookies=cookies_data) as session:
@@ -37,6 +38,8 @@ async def parse_magnit(city):
             html_code = await response.text()
 
         soup = BeautifulSoup(html_code, 'html.parser')
+
+        # Находим все промо-продукты на сайте
         all_promo_products = soup.find_all(class_='card-sale card-sale_catalogue')
 
         promo_info = np.empty(len(all_promo_products), dtype=dict)
@@ -52,6 +55,7 @@ async def parse_magnit(city):
             old_price = ".".join(
                 t.text for t in promo_product.find(class_='label__price label__price_old').find_all('span'))
 
+            # Есть товары, в которых скидка явно не указано, считаем вручную
             try:
                 discount = promo_product.find('div', {'class': 'card-sale__discount'}).text
             except AttributeError:
