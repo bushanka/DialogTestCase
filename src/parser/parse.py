@@ -38,8 +38,11 @@ async def parse_magnit(city):
     cookies_data = {'mg_geo_id': '2398'} if city == 'Москва' else {'mg_geo_id': '2425'}
 
     async with aiohttp.ClientSession(cookies=cookies_data) as session:
-        async with session.get('https://magnit.ru/promo/', timeout=10) as response:
-            html_code = await response.text()
+        try:
+            async with session.get('https://magnit.ru/promo/', timeout=10) as response:
+                html_code = await response.text()
+        except asyncio.exceptions.TimeoutError:
+            return None
 
         soup = BeautifulSoup(html_code, 'html.parser')
 

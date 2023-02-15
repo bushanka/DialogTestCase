@@ -28,7 +28,10 @@ async def handle_request(message: types.Message):
     if city == 'Москва' or city == 'Новосибирск':
         await message.answer('Загружаю...')
         file_name = await parse_magnit(city)
-        await message.answer_document(open(file_name, 'rb'), reply_markup=main_keyboard)
+        if file_name is not None:
+            await message.answer_document(open(file_name, 'rb'), reply_markup=main_keyboard)
+        else:
+            await message.answer("Слишком много запросов, попробуйте позже", reply_markup=main_keyboard)
     else:
         await message.answer("Используйте только кнопки", reply_markup=main_keyboard)
 
