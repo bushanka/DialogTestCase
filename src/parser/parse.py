@@ -11,13 +11,17 @@ from aiocsv import AsyncDictWriter
 async def save_to_csv(file_name, data):
     """
     Сохраняет данные в csv файл.
-    :param data: Данные, которые нужно сохранить
+    :param data: Данные в виде массива словарей, которые нужно сохранить
     :param file_name: имя файла
     :return: None
     """
     async with aiofiles.open(file_name, mode="w", encoding="utf-8", newline="") as afp:
         writer = AsyncDictWriter(afp, [
-            'Product', 'Discount', 'OldPrice', 'NewPrice', 'PromotionTime'
+            'Продукт',
+            'Скидка',
+            'Старая цена',
+            'Новая цена',
+            'Время акции'
         ], restval="NULL", quoting=csv.QUOTE_ALL)
         await writer.writeheader()
         await writer.writerows(data)
@@ -62,11 +66,11 @@ async def parse_magnit(city):
                 discount = '-' + str(round((1 - float(new_price) / float(old_price)) * 100)) + '%'
 
             promo_info[i] = {
-                'Product': title,
-                'Discount': discount,
-                'OldPrice': old_price,
-                'NewPrice': new_price,
-                'PromotionTime': promo_time
+                'Продукт': title,
+                'Скидка': discount,
+                'Старая цена': old_price,
+                'Новая цена': new_price,
+                'Время акции': promo_time
             }
 
         file_name = city + '_' + f"{datetime.datetime.now():%Y_%m_%d__%H_%M}" + '.csv'
